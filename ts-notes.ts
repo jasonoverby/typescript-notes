@@ -188,14 +188,14 @@ interface H {
 // type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 // to extend and override type:
-// interface I extends Omit<H, 'a'> {
-//   a: string;
-// }
+interface I extends Omit<H, 'a'> {
+  a: string;
+}
 
-// const i: I = {
-//   a: 'hi',
-//   b: 2,
-// };
+const i: I = {
+  a: 'hi',
+  b: 2,
+};
 
 interface TopBottomLeftRight {
   bottom: number;

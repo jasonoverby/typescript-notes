@@ -1,5 +1,5 @@
 {
-  "name": "udemyTypescript",
+  "name": "typescript-notes",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -14,10 +14,11 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
+    "@types/node": "^12.0.8",
     "nodemon": "1.19.1",
     "prettier": "1.18.2",
     "ts-node": "8.2.0",
     "tslint": "5.16.0",
-    "typescript": "3.5.2"
+    "typescript": "^3.5.2"
   }
 }
