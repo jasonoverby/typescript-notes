@@ -1,6 +1,3 @@
-import { ListenOptions } from 'net';
-import { LOADIPHLPAPI, resolveTxt } from 'dns';
-
 // tuples
 const address: [string, number] = ['stuff', 99];
 
@@ -183,22 +180,22 @@ const f: F = ['hi'];
 type G = [string, number];
 const g: G = ['hi', 1];
 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
 interface H {
   a: number;
   b: number;
 }
 
-// to extend and override type:
-interface I extends Omit<H, 'a'> {
-  a: string;
-}
+// type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-const i: I = {
-  a: 'hi',
-  b: 2,
-};
+// to extend and override type:
+// interface I extends Omit<H, 'a'> {
+//   a: string;
+// }
+
+// const i: I = {
+//   a: 'hi',
+//   b: 2,
+// };
 
 interface TopBottomLeftRight {
   bottom: number;
@@ -843,8 +840,8 @@ const filter: Filter = (array, func) => {
 const chills = filter(['chill', 'totes chill', 'nope'], (el) => el.includes('chill'));
 console.log(chills);
 
-type Map = <T, U>(array: T[], f: (item: T) => U) => U[];
-const map: Map = (array, func) => {
+type ArrayMap = <T, U>(array: T[], f: (item: T) => U) => U[];
+const map: ArrayMap = (array, func) => {
   const mappedArr = [];
   for (const item of array) {
     mappedArr.push(func(item));
@@ -889,7 +886,7 @@ interface HasSides {
 interface SidesHaveLength {
   sideLength: number;
 }
-const logPerimeter = <Shape extends HasSides & SidesHaveLength>(s: Shape): void => {
+const logPerimeter = <Quadrilateral extends HasSides & SidesHaveLength>(s: Quadrilateral): void => {
   console.log(s.numberOfSides * s.sideLength);
 };
 type Square = HasSides & SidesHaveLength;
