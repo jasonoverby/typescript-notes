@@ -1,0 +1,21 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended"],
+  "jsRules": {
+    "no-console": false,
+    "object-literal-sort-keys": true,
+    "ordered-imports": false,
+    "quotemark": [true, "single"]
+  },
+  "rules": {
+    "interface-name": false,
+    "max-classes-per-file": false,
+    "no-console": false,
+    "no-default-export": true,
+    "object-literal-sort-keys": true,
+    "ordered-imports": false,
+    "quotemark": [true, "single"],
+    "variable-name": false
+  },
+  "rulesDirectory": []
+}
