@@ -1089,3 +1089,132 @@ const describeShape = (shape: Shape): Shape => {
   console.log(shape.radius);
   return shape;
 };
+
+/**
+ * key in operator for types
+ */
+interface APIResponse {
+  user: {
+    userId: string;
+    friendList: {
+      count: number;
+      friends: Array<{
+        firstName: string;
+        lastName: string;
+      }>;
+    };
+  };
+}
+type FriendList = APIResponse['user']['friendList'];
+const renderFriendList = (friendList: FriendList) => {
+  console.log(friendList);
+};
+/** since friends in FriendList is an array, a specific friend is at index number */
+type Friend = FriendList['friends'][number];
+
+/**
+ * key of operator
+ */
+type ResponseKeys = keyof APIResponse;
+type UserKeys = keyof APIResponse['user'];
+type FriendListKeys = keyof APIResponse['user']['friendList'];
+
+/**
+ * typesafe getter function that looks up that value at the given key in an object
+ */
+const get = <O extends object, K extends keyof O>(o: O, key: K): O[K] => o[key];
+interface ActivityLog {
+  events: Array<{
+    id: string;
+    timestamp: Date;
+    type: 'Read' | 'Write';
+  }>;
+}
+const activityLog: ActivityLog = {
+  events: [
+    {
+      id: '1',
+      timestamp: new Date(),
+      type: 'Read',
+    },
+    {
+      id: '2',
+      timestamp: new Date(),
+      type: 'Read',
+    },
+  ],
+};
+const lastEvent = get(activityLog.events, 1);
+const firstEvent = get(activityLog.events, 0);
+
+/**
+ * Records
+ * keys must be string or number
+ */
+
+type Weekend = 'Sat' | 'Sun';
+type Weekday = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri';
+type Day = Weekday | Weekend;
+const nextDay1: Record<Weekday, Day> = {
+  Fri: 'Sat',
+  Mon: 'Tue',
+  Thu: 'Fri',
+  Tue: 'Wed',
+  Wed: 'Thu',
+};
+
+/**
+ * Mapped Types
+ * more power than Record b/c, in addition to letting you give types to an object's
+ * keys and values, when combined w/ keyed-in types, they let you put constraints on
+ * which value type corresponds w/ which key name
+ */
+const nextDay2: { [K in Weekday]: Day } = {
+  Fri: 'Sat',
+  Mon: 'Tue',
+  Thu: 'Fri',
+  Tue: 'Wed',
+  Wed: 'Thu',
+};
+
+interface Account {
+  id: number;
+  isEmployee: boolean;
+  notes: string[];
+}
+/** make all fields options */
+type OptionalAccount = {
+  [K in keyof Account]?: Account[K];
+};
+/** make all fields nullable */
+type NullableAccount = {
+  [K in keyof Account]: Account[K] | null;
+};
+/** make all fields readonly */
+type ReadonlyAccount = Readonly<Account>;
+// type ReadonlyAccount = {
+//   readonly [K in keyof Account]: Account[K];
+// };
+/**
+ * undo readonly
+ * minus operator (-) is a special type operator only avail
+ * with mapped types
+ * there is also a corresponding plus (+) operator, but
+ * it's unlikely it will be used often b/c it's implied
+ */
+type Account2 = {
+  -readonly [K in keyof ReadonlyAccount]: Account[K];
+};
+/** make all fields required again */
+type Account3 = {
+  [K in keyof OptionalAccount]-?: Account[K];
+};
+/** built-in mapped types
+ * ```typescript
+ * Record<Keys, Values> // an obj w/ keys of type Keys and values of type Values
+ * Partial<Object> // marks every field in an object as optional
+ * Required<Object> // marks every field in Object as nonoptional
+ * Readonly<Object> // marks every field in Object as readonly
+ * Pick<Object, Keys> // returns a subtype of Object w/ just the given keys
+ * ```
+ */

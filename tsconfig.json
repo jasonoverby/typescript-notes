@@ -5,6 +5,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmitOnError": false,
+    "noImplicitReturns": true,
     "noUnusedParameters": true,
     "outDir": "build",
     "plugins": [{ "name": "typescript-tslint-plugin" }],
