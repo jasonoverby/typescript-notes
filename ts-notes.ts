@@ -1,3 +1,5 @@
+import { stringify } from 'querystring';
+
 // tuples
 const address: [string, number] = ['stuff', 99];
 
@@ -1218,3 +1220,145 @@ type Account3 = {
  * Pick<Object, Keys> // returns a subtype of Object w/ just the given keys
  * ```
  */
+
+/**
+ * Companion Object Pattern
+ * in the same scope, you can have the same name bound to both a type and a value
+ */
+type CurrencyUnit = 'EUR' | 'GBP' | 'JPY' | 'USD';
+interface Currency {
+  unit: CurrencyUnit;
+  value: number;
+}
+const Currency = {
+  from(value: number, unit: CurrencyUnit = 'USD'): Currency {
+    return { unit, value };
+  },
+};
+
+type ArrayItems<T extends any[]> = T extends Array<infer TItems> ? TItems : never;
+
+type ExcludeProperties<TObj, TKeys extends string | number> = Pick<TObj, Exclude<keyof TObj, TKeys>>;
+
+type ArrayMutationKeys = Exclude<keyof any[], keyof ReadonlyArray<any>> | number;
+
+type FixedLengthArray<T extends any[]> = ExcludeProperties<T, ArrayMutationKeys> & {
+  readonly [Symbol.iterator]: () => IterableIterator<ArrayItems<T>>;
+};
+
+const tuple: FixedLengthArray<[number, string]> = [0, ''];
+let a = tuple[0]; // a: number
+let b = tuple[1]; // b: string
+tuple[1] = 'hi'; // reassignment is possible
+// tuple[1] = 5; // Error - positiion 1 should be string
+// tuple[2] = 'hi' // Error - past length
+// let c = tuple[2]; // Error when using --noImplicitAny
+// tuple.push('hi'); // Error - mutation methods are not allowed
+tuple[0] = 1; // reassignment is possible
+let [d, e] = tuple; // d: number, e: string
+// let [f, g, h] = tuple; // Error
+
+/**
+ * User-defined type guards
+ * is operator
+ */
+
+const isString = (param: unknown): param is string => typeof param === 'string';
+const parseInput = (input: string | number) => {
+  if (isString(input)) {
+    /** b/c return type of isString is not just boolean, parseInput knows input will
+     * be a string here
+     */
+    return input.toUpperCase();
+  }
+
+  return input;
+};
+
+console.log(parseInput(5)); // 5
+console.log(parseInput('hi')); // 'HI'
+
+/**
+ * Conditional types
+ */
+type IsString<T> = T extends string ? true : false;
+const theStr = 'a';
+const theNum = 5;
+type Yep = IsString<typeof theStr>; // true
+type Nope = IsString<typeof theNum>; // false
+const theTruth: Yep = true;
+const theLie: Nope = false;
+// const theError: Yep = false;
+
+type ToArray<T> = T[];
+const arr1: Array<number | string> = [1, 'hi'];
+const arr2: ToArray<number | string> = [1, 'hi']; // types are equivalent
+
+type ToArrayToo<T> = T extends Array<infer U> ? U[] : T[];
+type ToArrayTooToo<T> = T extends unknown ? T[] : T[];
+// const arr3: number[] | string[] = [1, 'hi']; // doesn't work
+const arr3: number[] | string[] = [1, 1];
+const arr4: ToArrayToo<number | string> = [1, 1];
+const arr5: ToArrayTooToo<number | string> = ['hi', 'there'];
+// const arr5: ToArrayToo<number | string> = [1, 'hi']; // fails
+
+type Without<T, U> = T extends U ? never : T;
+type NumOrStr = Without<boolean | number | string, boolean>; // number or sting
+
+/** infer keyword
+ * can be used instead of unknown
+ */
+type ElemenType2<T> = T extends Array<infer U> ? U : T;
+type ANum = ElemenType2<number[]>;
+const five: ANum = 5;
+
+/**
+ * Built-in conditional types
+ * Exclude<T, U> - similar to Without<T, U> above
+ */
+
+/**
+ * Extract<T, U>
+ * Computes the types in T that can be assigned to U
+ */
+type NumOrStr2 = number | string;
+type JustStr = string;
+type JustStringToo = Extract<NumOrStr2, JustStr>;
+const palmTree: JustStringToo = 'palm tree';
+
+/**
+ * NonNullable<T>
+ * Computes a version of T that excludes null and undefined
+ */
+interface MaybeNull {
+  a?: number | null;
+}
+type NotNull = NonNullable<MaybeNull['a']>; // number
+
+/**
+ * ReturnType<F>
+ * computes a function's return type
+ * note: doesn't work as expected for generic or overloaded funcs
+ */
+type Funk = (a: number) => string;
+type ReturnOfFunk = ReturnType<Funk>; // string
+
+/**
+ * Escape Hatches
+ */
+
+/**
+ * Type Assertions
+ * as keyword
+ */
+
+/**
+ * Nonnull assertions
+ * ! operator
+ */
+
+/**
+ * Definite assignment assertions
+ */
+let userId!: string;
+userId = 'hi';
